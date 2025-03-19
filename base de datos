@@ -1,0 +1,70 @@
+CREATE DATABASE Gimnasio;
+USE Gimnasio;
+
+-- Tabla de clientes
+CREATE TABLE Clientes (
+    id_cliente INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100),
+    apellido VARCHAR(100),
+    email VARCHAR(100) UNIQUE,
+    telefono VARCHAR(20),
+    fecha_nacimiento DATE,
+    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabla de membresías
+CREATE TABLE Membresias (
+    id_membresia INT AUTO_INCREMENT PRIMARY KEY,
+    tipo VARCHAR(50), -- Ejemplo: Básica, Premium, VIP
+    precio DECIMAL(10,2),
+    duracion_meses INT
+);
+
+-- Relación entre clientes y membresías
+CREATE TABLE Clientes_Membresias (
+    id_cliente INT,
+    id_membresia INT,
+    fecha_inicio DATE,
+    fecha_fin DATE,
+    FOREIGN KEY (id_cliente) REFERENCES Clientes(id_cliente) ON DELETE CASCADE,
+    FOREIGN KEY (id_membresia) REFERENCES Membresias(id_membresia) ON DELETE SET NULL
+);
+
+-- Tabla de entrenadores
+CREATE TABLE Entrenadores (
+    id_entrenador INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100),
+    apellido VARCHAR(100),
+    especialidad VARCHAR(100),
+    email VARCHAR(100) UNIQUE
+);
+
+-- Tabla de clases
+CREATE TABLE Clases (
+    id_clase INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100),
+    id_entrenador INT,
+    capacidad INT,
+    horario TIME,
+    FOREIGN KEY (id_entrenador) REFERENCES Entrenadores(id_entrenador) ON DELETE SET NULL
+);
+
+-- Inscripciones a clases
+CREATE TABLE Inscripciones (
+    id_cliente INT,
+    id_clase INT,
+    fecha_inscripcion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id_cliente, id_clase),
+    FOREIGN KEY (id_cliente) REFERENCES Clientes(id_cliente) ON DELETE CASCADE,
+    FOREIGN KEY (id_clase) REFERENCES Clases(id_clase) ON DELETE CASCADE
+);
+
+-- Pagos de clientes
+CREATE TABLE Pagos (
+    id_pago INT AUTO_INCREMENT PRIMARY KEY,
+    id_cliente INT,
+    monto DECIMAL(10,2),
+    fecha_pago TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    metodo_pago VARCHAR(50), -- Ejemplo: Efectivo, Tarjeta, Transferencia
+    FOREIGN KEY (id_cliente) REFERENCES Clientes(id_cliente) ON DELETE CASCADE
+);
